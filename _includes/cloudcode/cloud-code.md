@@ -197,8 +197,8 @@ This function will only run if:
 However, the requested user could set 'accType' to reviewer, and then recall the function. Here, you could provide validation on a `Parse.User` `beforeSave` trigger. `beforeSave` validators have a few additional options available, to help you make sure your data is secure.
 
 ```javascript
-Parse.Cloud.beforeSave(Parse.User, () => {
-  // any additional beforeSave logic here
+Parse.Cloud.beforeSave(Parse.User, (request) => {
+  // any additional beforeSave logic here. With skipWithMasterKey, if a masterKey is used, request.object will be returned, and this code won't run.
 }, {
     fields: {
       accType: {
@@ -206,6 +206,7 @@ Parse.Cloud.beforeSave(Parse.User, () => {
         constant: true
       },
     },
+    skipWithMasterKey: true
 });
 ```
 This means that the field `accType` on `Parse.User` will be 'viewer' on signup, and will be unchangable, unless `masterKey` is provided.
@@ -217,6 +218,7 @@ The full range of built-in Validation Options are:
 - `validateMasterKey`: whether the validator should run on `masterKey` (defaults to false).
 - `fields`: an `Array` or `Object` of fields that are required on the request.
 - `requireUserKeys`: an `Array` of fields to be validated on `request.user`.
+- `skipWithMasterKey`: whether the trigger should "skip" if `masterKey` is provided.
 
 The full range of built-in Validation Options on `.fields` are:
 
